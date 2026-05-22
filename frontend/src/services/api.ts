@@ -4,7 +4,8 @@ export const tokenKey = "accessToken";
 
 // Axios instance pointing directly at the backend
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:4000",
+  baseURL: import.meta.env.VITE_API_URL,
+  withCredentials:true,
 });
 
 // Attach the JWT token to every request when present

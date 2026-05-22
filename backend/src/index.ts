@@ -28,7 +28,7 @@ const serveClient = (_req: express.Request, res: express.Response) => {
 
 app.use(
     cors({
-        origin: ['https://x-clone-silk-tau.vercel.app/', 'http://localhost:5173'],
+        origin: ['https://x-clone-silk-tau.vercel.app', 'http://localhost:5173'],
     }),
 )
 
