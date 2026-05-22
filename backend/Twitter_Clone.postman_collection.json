@@ -1,0 +1,279 @@
+{
+  "info": {
+    "name": "Twitter Clone API (Structured)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Signup",
+          "request": {
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n \"display_name\": \"Dev\",\n \"username\": \"dev_khunt\",\n \"email\": \"dev@gmail.com\",\n \"password\": \"dev123\",\n \"dob\": \"2002-12-12\",\n \"country\": \"India\"\n}"
+            },
+            "url": "{{base_url}}/auth/signup"
+          }
+        },
+        {
+          "name": "Signin",
+          "request": {
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n \"email\": \"dev@gmail.com\",\n \"password\": \"dev123\"\n}"
+            },
+            "url": "{{base_url}}/auth/signin"
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{base_url}}/users/dev_khunt"
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "Tweets",
+      "item": [
+        {
+          "name": "Create Tweet",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n \"content\": \"Hello Twitter Clone\"\n}"
+            },
+            "url": "{{base_url}}/tweets"
+          }
+        },
+        {
+          "name": "Get Feed",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{base_url}}/tweets/feed"
+          }
+        },
+        {
+          "name": "Get Tweet By ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{base_url}}/tweets/1"
+          }
+        },
+        {
+          "name": "Delete Tweet",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{base_url}}/tweets/1"
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "Likes",
+      "item": [
+        {
+          "name": "Like Tweet",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{base_url}}/tweets/1/like"
+          }
+        },
+        {
+          "name": "Unlike Tweet",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{base_url}}/tweets/1/like"
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "Retweets",
+      "item": [
+        {
+          "name": "Retweet",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{base_url}}/retweets/1"
+          }
+        },
+        {
+          "name": "Undo Retweet",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{base_url}}/retweets/1"
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "Comments",
+      "item": [
+        {
+          "name": "Add Comment",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n \"content\": \"Nice tweet!\"\n}"
+            },
+            "url": "{{base_url}}/comments/1"
+          }
+        },
+        {
+          "name": "Reply Comment",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n \"content\": \"Reply here\"\n}"
+            },
+            "url": "{{base_url}}/comments/reply/1"
+          }
+        },
+        {
+          "name": "Get Comments",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/comments/tweet/1"
+          }
+        },
+        {
+          "name": "Get Replies",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/replies/comment/1"
+          }
+        },
+        {
+          "name": "Delete Comment",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{base_url}}/comments/1"
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "Comment Likes",
+      "item": [
+        {
+          "name": "Like Comment",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{base_url}}/comments/1/like"
+          }
+        },
+        {
+          "name": "Unlike Comment",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{base_url}}/comments/1/like"
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "Follows",
+      "item": [
+        {
+          "name": "Follow User",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{base_url}}/follows/2"
+          }
+        },
+        {
+          "name": "Unfollow User",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{base_url}}/follows/2"
+          }
+        },
+        {
+          "name": "Get Followers",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/follows/2/followers"
+          }
+        },
+        {
+          "name": "Get Following",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/follows/2/following"
+          }
+        }
+      ]
+    }
+
+  ]
+}
