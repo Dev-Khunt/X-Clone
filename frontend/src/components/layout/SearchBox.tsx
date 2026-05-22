@@ -1,6 +1,6 @@
 import { Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { api } from "../../services/api";
+import api from "../../services/api";
 import { SearchResult, StoredUser, Tweet } from "../../types";
 import { avatar } from "../../utils/format";
 import { navigate } from "../../utils/navigation";
@@ -18,7 +18,7 @@ export function SearchBox({ onResultClick }: { onResultClick?: () => void }) {
     }
 
     const timer = window.setTimeout(() => {
-      api<SearchResult>(`/search?q=${encodeURIComponent(query)}`).then(setResults).catch(console.error);
+      api.get<SearchResult>(`/search?q=${encodeURIComponent(query)}`).then((res) => setResults(res.data)).catch(console.error);
     }, 350);
 
     return () => window.clearTimeout(timer);

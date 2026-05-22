@@ -1,6 +1,6 @@
 import { Heart, MessageCircle, MoreHorizontal, Repeat2, Trash2 } from "lucide-react";
 import { MouseEvent, useEffect, useRef, useState } from "react";
-import { api } from "../../services/api";
+import api from "../../services/api";
 import { Tweet } from "../../types";
 import { avatar, formatTime } from "../../utils/format";
 import { navigate } from "../../utils/navigation";
@@ -56,9 +56,11 @@ export function TweetCard({
     setLikeCount((c) => (wasLiked ? c - 1 : c + 1));
     try {
       // 2. Fire API in background
-      await api(`/reactions/tweets/${tweet.tweet_id}`, {
-        method: wasLiked ? "DELETE" : "POST",
-      });
+      if (wasLiked) {
+        await api.delete(`/reactions/tweets/${tweet.tweet_id}`);
+      } else {
+        await api.post(`/reactions/tweets/${tweet.tweet_id}`);
+      }
     } catch {
       // 3. Rollback on failure
       setLiked(wasLiked);
@@ -75,9 +77,11 @@ export function TweetCard({
     setRetweetCount((c) => (wasRetweeted ? c - 1 : c + 1));
     try {
       // 2. Fire API in background
-      await api(`/retweets/${tweet.tweet_id}`, {
-        method: wasRetweeted ? "DELETE" : "POST",
-      });
+      if (wasRetweeted) {
+        await api.delete(`/retweets/${tweet.tweet_id}`);
+      } else {
+        await api.post(`/retweets/${tweet.tweet_id}`);
+      }
     } catch {
       // 3. Rollback on failure
       setRetweeted(wasRetweeted);
@@ -89,7 +93,7 @@ export function TweetCard({
   async function deleteTweet(event: MouseEvent) {
     event.stopPropagation();
     setMenuOpen(false);
-    await api(`/tweets/${tweet.tweet_id}`, { method: "DELETE" });
+    await api.delete(`/tweets/${tweet.tweet_id}`);
     onChanged();
   }
 

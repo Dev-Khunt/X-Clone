@@ -1,7 +1,7 @@
 import { Image, X } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
-import { api } from "../../services/api";
+import api from "../../services/api";
 import { avatar } from "../../utils/format";
 
 export function TweetComposer({ onPosted }: { onPosted: () => void }) {
@@ -19,7 +19,7 @@ export function TweetComposer({ onPosted }: { onPosted: () => void }) {
 
     setBusy(true);
     try {
-      await api("/tweets", { method: "POST", body });
+      await api.post("/tweets", body);
       setContent("");
       setFile(null);
       onPosted();

@@ -4,7 +4,7 @@ import { Header } from "../components/layout/Header";
 import { CommentCard } from "../components/tweet/CommentCard";
 import { TweetCard } from "../components/tweet/TweetCard";
 import { EmptyState } from "../components/ui/EmptyState";
-import { api } from "../services/api";
+import api from "../services/api";
 import { CommentItem, Tweet } from "../types";
 import { useAuth } from "../context/AuthContext";
 import { avatar, formatTime } from "../utils/format";
@@ -15,20 +15,17 @@ export function TweetDetail({ tweetId }: { tweetId: number }) {
   const [comments, setComments] = useState<CommentItem[]>([]);
 
   async function loadTweet() {
-    const rows = await api<Tweet[]>(`/tweets/${tweetId}`);
+    const { data: rows } = await api.get<Tweet[]>(`/tweets/${tweetId}`);
     setTweet(rows[0]);
-    setComments(await api<CommentItem[]>(`/comments/tweet/${tweetId}`));
+    const { data: comments } = await api.get<CommentItem[]>(`/comments/tweet/${tweetId}`);
+    setComments(comments);
   }
 
   async function postComment(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const input = event.currentTarget.elements.namedItem("content") as HTMLInputElement;
     if (!input.value.trim()) return;
-    await api(`/comments/${tweetId}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ content: input.value }),
-    });
+    await api.post(`/comments/${tweetId}`, { content: input.value });
     input.value = "";
     loadTweet();
   }
@@ -86,30 +83,27 @@ function ThreadedComment({
   const [replyOpen, setReplyOpen] = useState(false);
 
   async function loadReplies() {
-    setReplies(await api<CommentItem[]>(`/comments/replies/${comment.comment_id}`));
+    const { data } = await api.get<CommentItem[]>(`/comments/replies/${comment.comment_id}`);
+    setReplies(data);
   }
 
   async function postReply(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const input = event.currentTarget.elements.namedItem("reply") as HTMLInputElement;
     if (!input.value.trim()) return;
-    await api(`/comments/reply/${comment.comment_id}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ content: input.value }),
-    });
+    await api.post(`/comments/reply/${comment.comment_id}`, { content: input.value });
     input.value = "";
     setReplyOpen(false);
     loadReplies();
   }
 
   async function deleteComment() {
-    await api(`/comments/${comment.comment_id}`, { method: "DELETE" });
+    await api.delete(`/comments/${comment.comment_id}`);
     refresh();
   }
 
   async function deleteReply(replyId: number) {
-    await api(`/comments/${replyId}`, { method: "DELETE" });
+    await api.delete(`/comments/${replyId}`);
     loadReplies();
   }
 

@@ -3,7 +3,7 @@ import { Repeat2 } from "lucide-react";
 import { XLogo } from "../components/ui/XLogo";
 import { ThemeToggle } from "../components/layout/ThemeToggle";
 import { useAuth } from "../context/AuthContext";
-import { api } from "../services/api";
+import api from "../services/api";
 import { COUNTRIES } from "../utils/constants";
 import { navigate } from "../utils/navigation";
 
@@ -22,15 +22,11 @@ export function Signin() {
     setLoading(true);
 
     try {
-      const data = await api<any>("/auth/signin", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          identifier: form.get("identifier"),
-          password: form.get("password"),
-          captchaId: captcha?.id,
-          captchaText: captcha?.text,
-        }),
+      const { data } = await api.post("/auth/signin", {
+        identifier: form.get("identifier"),
+        password: form.get("password"),
+        captchaId: captcha?.id,
+        captchaText: captcha?.text,
       });
 
       login(data.accessToken, {
@@ -75,14 +71,10 @@ export function Signup() {
     setMessage("");
 
     try {
-      await api("/auth/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...Object.fromEntries(form.entries()),
-          captchaId: captcha?.id,
-          captchaText: captcha?.text,
-        }),
+      await api.post("/auth/signup", {
+        ...Object.fromEntries(form.entries()),
+        captchaId: captcha?.id,
+        captchaText: captcha?.text,
       });
 
       setMessage("Account created. Redirecting to sign in...");
@@ -141,7 +133,7 @@ function AuthField(props: React.InputHTMLAttributes<HTMLInputElement> & { label:
 
 function CaptchaBox({ captcha, setCaptcha }: { captcha: Captcha | null; setCaptcha: (captcha: Captcha) => void }) {
   async function loadCaptcha() {
-    const data = await api<{ captchaId: number; captcha: string }>("/auth/captcha");
+    const { data } = await api.get<{ captchaId: number; captcha: string }>("/auth/captcha");
     setCaptcha({ id: data.captchaId, image: data.captcha, text: "" });
   }
 

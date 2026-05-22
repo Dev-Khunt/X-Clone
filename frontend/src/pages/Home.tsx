@@ -3,7 +3,7 @@ import { Header } from "../components/layout/Header";
 import { EmptyState } from "../components/ui/EmptyState";
 import { TweetCard } from "../components/tweet/TweetCard";
 import { TweetComposer } from "../components/tweet/TweetComposer";
-import { api } from "../services/api";
+import api from "../services/api";
 import { Tweet } from "../types";
 
 export function Home() {
@@ -11,7 +11,8 @@ export function Home() {
   const [loading, setLoading] = useState(true);
 
   async function loadFeed() {
-    setTweets(await api<Tweet[]>("/tweets/feed"));
+    const { data } = await api.get<Tweet[]>("/tweets/feed");
+    setTweets(data);
     setLoading(false);
   }
 

@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useState } from "react";
-import { api } from "../services/api";
+import api from "../services/api";
 import { CommentWithTweet, Profile as ProfileType, StoredUser, Tweet } from "../types";
 import { Header } from "../components/layout/Header";
 import { Modal } from "../components/ui/Modal";
@@ -33,26 +33,27 @@ export function Profile({ username }: { username: string }) {
     : myFollowing.some((item) => item.user_id === profile?.user_id);
 
   async function loadProfile() {
-    const nextProfile = await api<ProfileType>(`/users/${username}`);
+    const { data: nextProfile } = await api.get<ProfileType>(`/users/${username}`);
     setProfile(nextProfile);
 
-    const [nextFollowers, nextFollowing] = await Promise.all([
-      api<StoredUser[]>(`/follows/${nextProfile.user_id}/followers`),
-      api<StoredUser[]>(`/follows/${nextProfile.user_id}/following`),
+    const [followersRes, followingRes] = await Promise.all([
+      api.get<StoredUser[]>(`/follows/${nextProfile.user_id}/followers`),
+      api.get<StoredUser[]>(`/follows/${nextProfile.user_id}/following`),
     ]);
-    setFollowers(nextFollowers);
-    setFollowing(nextFollowing);
+    setFollowers(followersRes.data);
+    setFollowing(followingRes.data);
 
     // Fetch the logged-in user's own following list to correctly determine isFollowing
     if (user?.user_id && user.user_id !== nextProfile.user_id) {
-      const myList = await api<StoredUser[]>(`/follows/${user.user_id}/following`);
+      const { data: myList } = await api.get<StoredUser[]>(`/follows/${user.user_id}/following`);
       setMyFollowing(myList);
     }
   }
 
   async function loadTab() {
     const endpoint = tab === "posts" ? "tweets" : tab;
-    setItems(await api<Array<Tweet | CommentWithTweet>>(`/users/${username}/${endpoint}`));
+    const { data } = await api.get<Array<Tweet | CommentWithTweet>>(`/users/${username}/${endpoint}`);
+    setItems(data);
   }
 
   async function toggleFollow() {
@@ -69,7 +70,11 @@ export function Profile({ username }: { username: string }) {
       }
     }
     try {
-      await api(`/follows/${profile.user_id}`, { method: wasFollowing ? "DELETE" : "POST" });
+      if (wasFollowing) {
+        await api.delete(`/follows/${profile.user_id}`);
+      } else {
+        await api.post(`/follows/${profile.user_id}`);
+      }
     } catch {
       // Rollback on failure
       loadProfile();
@@ -174,23 +179,23 @@ function EditProfile({ profile, onClose, refresh }: { profile: ProfileType; onCl
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
-    await api(`/users/${profile.user_id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ bio: form.get("bio"), country: form.get("country"), dob: form.get("dob") }),
+    await api.put(`/users/${profile.user_id}`, {
+      bio: form.get("bio"),
+      country: form.get("country"),
+      dob: form.get("dob"),
     });
 
     const profileImage = form.get("profileImage") as File;
     const coverImage = form.get("coverImage") as File;
     if (profileImage?.size) {
-      const data = new FormData();
-      data.append("profileImage", profileImage);
-      await api(`/users/${profile.user_id}/profile-image`, { method: "POST", body: data });
+      const profileData = new FormData();
+      profileData.append("profileImage", profileImage);
+      await api.post(`/users/${profile.user_id}/profile-image`, profileData);
     }
     if (coverImage?.size) {
-      const data = new FormData();
-      data.append("coverImage", coverImage);
-      await api(`/users/${profile.user_id}/cover-image`, { method: "POST", body: data });
+      const coverData = new FormData();
+      coverData.append("coverImage", coverImage);
+      await api.post(`/users/${profile.user_id}/cover-image`, coverData);
     }
 
     await refresh();
