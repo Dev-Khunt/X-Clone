@@ -15,7 +15,7 @@ import searchRoutes from "./routes/search_routes";
 import path from 'path';
 
 const app :  express.Application = express();
-const clientDistPath = path.resolve(__dirname, "../dist/client");
+const clientDistPath = path.resolve(__dirname, "../../frontend/dist");
 const clientIndexPath = path.join(clientDistPath, "index.html");
 
 app.use(express.static(path.join(__dirname, "public")));
